@@ -1,11 +1,10 @@
 // Test file with intentional security bugs for ArmorCode testing. Do not use in real apps.
   const express = require('express');
-  const { exec } = require('child_process');
+  const { execFile } = require('child_process');
   const fs = require('fs');
   const app = express();
   
- // Bug 1 FIXED: only allow simple hostnames, no shell
-  const { execFile } = require('child_process');
+  // Bug 1 FIXED: only allow simple hostnames, no shell
   app.get('/ping', (req, res) => {
     const host = String(req.query.host || '');
     if (!/^[a-zA-Z0-9.-]+$/.test(host)) return res.status(400).send('bad host');
