@@ -4,9 +4,12 @@
   const fs = require('fs');
   const app = express();
   
-  // Bug 1: Command injection
+ // Bug 1 FIXED: only allow simple hostnames, no shell
+  const { execFile } = require('child_process');
   app.get('/ping', (req, res) => {
-    exec('ping -c 1 ' + req.query.host, (err, out) => res.send(out));
+    const host = String(req.query.host || '');
+    if (!/^[a-zA-Z0-9.-]+$/.test(host)) return res.status(400).send('bad host');
+    execFile('ping', ['-c', '1', host], (err, out) => res.send(out));
   });
   
   // Bug 2: Reflected XSS
